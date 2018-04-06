@@ -41,7 +41,7 @@ public class UI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTextField1.setText("jTextField1");
+        jTextField1.setText("Archivo sin seleccionar");
 
         jButton1.setText("Cargar Archivo");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -170,7 +170,7 @@ public class UI extends javax.swing.JFrame {
                 case INSTEADOF:case INTERFACE:case ISSET:case LIST:case NAMESPACE:case NEW:case OR:
                 case PRIN:case PRIVATE:case PROTECTED:case PUBLIC:case REQUIRE:case REQUIRE_ONCE:case RETURN:
                 case STATIC:case SWITCH:case THROW:case TRAIT:case TRY:case UNSET:case USE:
-                case WHILE: case XOR: case YIELD: case RESERVED: case STRING:
+                case WHILE: case XOR: case YIELD: case RESERVED: case STRING: case REAL:
                     resultados =  resultados + "Token: "+token+" "+lexer.lexeme+"\n";
                 break;
                 default:
