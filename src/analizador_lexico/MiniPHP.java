@@ -125,9 +125,10 @@ public class MiniPHP extends javax.swing.JFrame {
                         if (currentLine.contains("$recordset"))
                         {
                             String aux;
-                            String arreglarRecordset = currentLine.replaceAll("\\s", "");
-                            arreglarRecordset = currentLine.replaceAll("$recordset[\"", "");
-                            arreglarRecordset = arreglarRecordset.replaceAll("\"].*", "");
+                            String arreglarRecordset = currentLine;
+                            arreglarRecordset = arreglarRecordset.replaceAll("\\s", "");
+                            arreglarRecordset = arreglarRecordset.replaceAll("\\$recordset\\[\"", "");
+                            arreglarRecordset = arreglarRecordset.replaceAll("].*", "");
                             aux = arreglarRecordset;
                             arreglarRecordset = arreglarRecordset.toUpperCase();
                             currentLine = currentLine.replaceAll(aux, arreglarRecordset);

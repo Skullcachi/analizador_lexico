@@ -59,14 +59,14 @@ PREDEFINEDVARIABLES= "$GLOBALS"|"$_SERVER"|"$_GET"|"$_POST"|"$_FILES"|"$_REQUEST
 {L}({L}|{D})* {lexeme=yytext(); return ID;}
 /* ESTRUCTURAS DE CONTROL*/
 "if"{white}?"("((("$"{L}({L}|{D})*) | (\"({L}({L}|{D})*|{D}({L}|{D})*|\s)*\") | ([-+]?{D}+) | ([-+]?{D}+"."{D}+) | ({BOOLEAN}) ){white}?("=="|">"|"<"|">="|"<="|"!="){white}?(("$"{L}({L}|{D})*) | (\"({L}({L}|{D})*|{D}({L}|{D})*|\s)*\") | ([-+]?{D}+) | ([-+]?{D}+"."{D}+) | ({BOOLEAN}) ) )* ")""{""}" {lexeme=yytext(); return ESTRUCTURA_DE_CONTROL;} /* IF*/
-"else"{white}?"{""}" {lexeme=yytext(); return ESTRUCTURA_DE_CONTROL;}/* ELSE */
-"elseif"{white}?"(".*")""{".*"}" {lexeme=yytext(); return ESTRUCTURA_DE_CONTROL;}/* ELSE IF*/
-"while"{white}?"(".*")""{".*"}" {lexeme=yytext(); return ESTRUCTURA_DE_CONTROL;}/* WHILE*/
-"do"{white}?"(".*")""{".*"}"{white}?"while""("")"";" {lexeme=yytext(); return ESTRUCTURA_DE_CONTROL;} /* DO WHILE*/
-"for"{white}?"("")""{""}" {lexeme=yytext(); return ESTRUCTURA_DE_CONTROL;}/* FOR */
-"foreach"{white}?"("")""{""}" {lexeme=yytext(); return ESTRUCTURA_DE_CONTROL;}/* FOREACH */
+"else"{white}?"{".*"}" {lexeme=yytext(); return ESTRUCTURA_DE_CONTROL;}/* ELSE */
+"elseif"{white}?"(".*")"{white}?"{".*"}" {lexeme=yytext(); return ESTRUCTURA_DE_CONTROL;}/* ELSE IF*/
+"while"{white}?"(".*")"{white}?"{".*"}" {lexeme=yytext(); return ESTRUCTURA_DE_CONTROL;}/* WHILE*/
+"do"{white}?"(".*")"{white}?"{".*"}"{white}?"while""("")"";" {lexeme=yytext(); return ESTRUCTURA_DE_CONTROL;} /* DO WHILE*/
+"for"{white}?"(".*";".*";"")"{white}?"{""}" {lexeme=yytext(); return ESTRUCTURA_DE_CONTROL;}/* FOR */
+"foreach"{white}?"(".*")"{white}?"{""}" {lexeme=yytext(); return ESTRUCTURA_DE_CONTROL;}/* FOREACH */
 "break"";" {lexeme=yytext(); return ESTRUCTURA_DE_CONTROL;}/* BREAK */
-"switch"{white}?"(".*")""{"("{RESERVED}"{white}+([-+]?{D}+)+":".*"break"";"{white}+)+"default"":".*:"break"";""}" {lexeme=yytext(); return ESTRUCTURA_DE_CONTROL;}/* SWITCH */
+"switch"{white}?"("(("$"{L}({L}|{D})*) | ([-+]?{D}+))")"{white}?"{"{white}?("case"":"{white}?(([-+]?{D}+) | ("$"{L}({L}|{D})*))":"{white}?.*";""break;")+{white}?"default"":".*"break"";""}" {lexeme=yytext(); return ESTRUCTURA_DE_CONTROL;}/* SWITCH */
 "include"{white}?(\"({L}({L}|{D})*|{D}({L}|{D})*|\s)*\")".""php"";" {lexeme=yytext(); return ESTRUCTURA_DE_CONTROL;}/* INCLUDE*/
 "continue"{white}?([-+]?{D}+)*";" {lexeme=yytext(); return ESTRUCTURA_DE_CONTROL;} /*CONTINUE*/
 "return"";" {lexeme=yytext(); return ESTRUCTURA_DE_CONTROL;} /*RETURN*/
@@ -81,6 +81,7 @@ PREDEFINEDVARIABLES= "$GLOBALS"|"$_SERVER"|"$_GET"|"$_POST"|"$_FILES"|"$_REQUEST
 "=" {return ASSIGN;}
 "," {return COMMA;}
 ";" {return SEMICOLON;}
+":" {return COLON;}
 "\"" {return DOUBLE_QUOTE;}
 "'" {return SINGLE_QUOTE;}
 "(" {return OPEN_PARENTHESIS;}
