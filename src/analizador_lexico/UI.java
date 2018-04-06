@@ -5,11 +5,18 @@
  */
 package analizador_lexico;
 
+import java.awt.List;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.util.*;
 
 /**
  *
@@ -83,9 +90,15 @@ public class UI extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    public String PATH = "C:/Users/SERGIO-PC/Desktop/";
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        BufferedReader reader;
+        String currentLine;
+        BufferedWriter writer;
+        BufferedWriter writerErrores;
+        FileFilter filter = new FileNameExtensionFilter("PHP Files", "php");
+        jFileChooser1.setFileFilter(filter);
         try {
             int returnVal = jFileChooser1.showOpenDialog(jFileChooser1);
             if (returnVal == jFileChooser1.APPROVE_OPTION)
@@ -94,6 +107,80 @@ public class UI extends javax.swing.JFrame {
                 //This is where a real application would open the file.
                 jTextArea1.append("Selected file: " + file.getAbsolutePath());
                 ProbarLexerFile(file);
+                if (hayError)
+                {
+                    
+                    writerErrores = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(PATH + "errores_encontrados.txt"), "utf-8"));
+                    for (int i = 0; i < listaErrores.size(); i++) {
+                        writerErrores.write(listaErrores.get(i));
+                    }
+                    writerErrores.close();
+                }
+                else
+                {
+                    writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(PATH + file.getName()), "utf-8"));
+                    reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
+                    while ((currentLine = reader.readLine()) != null)
+                    {
+                        if (currentLine.contains("$recordset"))
+                        {
+                            String aux;
+                            String arreglarRecordset = currentLine.replaceAll("\\s", "");
+                            arreglarRecordset = currentLine.replaceAll("$recordset[\"", "");
+                            arreglarRecordset = arreglarRecordset.replaceAll("\"].*", "");
+                            aux = arreglarRecordset;
+                            arreglarRecordset = arreglarRecordset.toUpperCase();
+                            currentLine = currentLine.replaceAll(aux, arreglarRecordset);
+                        }
+                        if(currentLine.contains("ELSE"))
+                        {
+                            currentLine = currentLine.replaceAll("ELSE", "else");
+                        }
+                        if(currentLine.contains("ELSEIF"))
+                        {
+                            currentLine = currentLine.replaceAll("ELSEIF", "elseif");
+                        }
+                        if(currentLine.contains("WHILE"))
+                        {
+                            currentLine = currentLine.replaceAll("WHILE", "while");
+                        }
+                        if(currentLine.contains("DO"))
+                        {
+                            currentLine = currentLine.replaceAll("DO", "do");
+                        }
+                        if(currentLine.contains("FOR"))
+                        {
+                            currentLine = currentLine.replaceAll("FOR", "for");
+                        }
+                        if(currentLine.contains("FOREACH"))
+                        {
+                            currentLine = currentLine.replaceAll("FOREACH", "foreach");
+                        }
+                        if(currentLine.contains("BREAK"))
+                        {
+                            currentLine = currentLine.replaceAll("BREAK", "break");
+                        }
+                        if(currentLine.contains("SWITCH"))
+                        {
+                            currentLine = currentLine.replaceAll("SWITCH", "switch");
+                        }
+                        if(currentLine.contains("INCLUDE"))
+                        {
+                            currentLine = currentLine.replaceAll("INCLUDE", "include");
+                        }
+                        if(currentLine.contains("CONTINUE"))
+                        {
+                            currentLine = currentLine.replaceAll("CONTINUE", "continue");
+                        }
+                        if(currentLine.contains("RETURN"))
+                        {
+                            currentLine = currentLine.replaceAll("RETURN", "return");
+                        }
+                        writer.write(currentLine);
+                    }
+                    writer.close();
+                    reader.close();
+                }
             }
             else
             {
@@ -142,10 +229,12 @@ public class UI extends javax.swing.JFrame {
         });
     }
     
+    public boolean hayError = false;
+    
+    public ArrayList<String> listaErrores = new ArrayList<String>();
     public void ProbarLexerFile(File filetoread) throws IOException{
         Reader reader;
         reader = new BufferedReader(new FileReader(filetoread.getAbsolutePath()));
-        
         Lexer  lexer = new Lexer(reader);
         String resultados = "";
         
@@ -158,7 +247,9 @@ public class UI extends javax.swing.JFrame {
             }
             switch(token){
                 case ERROR:
-                    resultados =  resultados + "ERROR, symbol(s) not part of PHP Language. \n";
+                    resultados =  resultados + "ERROR in line: "+lexer.linea+", column: "+lexer.columna+", symbol is not part of PHP Language. \n ";
+                    hayError = true;
+                    listaErrores.add(resultados);
                 break;
                 case ID: case INT: case __HALT_COMPILER: case ABSTRACT: case AND: case ARRAY:
                 case AS:case BREAK:case CALLABLE:case CASE:case CATCH:case CLASS:case CLONE:
@@ -170,7 +261,8 @@ public class UI extends javax.swing.JFrame {
                 case INSTEADOF:case INTERFACE:case ISSET:case LIST:case NAMESPACE:case NEW:case OR:
                 case PRIN:case PRIVATE:case PROTECTED:case PUBLIC:case REQUIRE:case REQUIRE_ONCE:case RETURN:
                 case STATIC:case SWITCH:case THROW:case TRAIT:case TRY:case UNSET:case USE:
-                case WHILE: case XOR: case YIELD: case RESERVED: case STRING: case REAL:
+                case WHILE: case XOR: case YIELD: case RESERVED: case STRING: case REAL: case ESTRUCTURA_DE_CONTROL:
+                case PREDEFINEDVARIABLE: case RECORDSET: case COMMENT:
                     resultados =  resultados + "Token: "+token+" "+lexer.lexeme+"\n";
                 break;
                 default:
